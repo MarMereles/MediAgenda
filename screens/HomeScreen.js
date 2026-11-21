@@ -1,10 +1,39 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+  Button,
+} from "react-native";
 import { useCitas } from "../context/CitasContext";
 
 export default function HomeScreen({ navigation }) {
-  const { citas } = useCitas();
+  const { citas, loading, error, cargarCitas } = useCitas();
 
+  // 1. Estado de carga
+  if (loading) {
+    return (
+      <View style={styles.centrado}>
+        <ActivityIndicator size="large" color="#1A237E" />
+        <Text style={styles.textoCarga}>Cargando pacientes...</Text>
+      </View>
+    );
+  }
+
+  // 2. Estado de error
+  if (error) {
+    return (
+      <View style={styles.centrado}>
+        <Text style={styles.textoError}>No se pudo cargar: {error}</Text>
+        <Button title="Reintentar" onPress={cargarCitas} color="#1A237E" />
+      </View>
+    );
+  }
+
+  // 3. Estado de datos (FlatList)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -12,47 +41,72 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.subtitulo}>Listado de Pacientes</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.listaContainer}>
-        {citas.map((cita) => (
+      <FlatList
+        data={citas}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listaContainer}
+        renderItem={({ item }) => (
           <Pressable
-            key={cita.id}
             style={({ pressed }) => [
               styles.tarjeta,
               pressed && styles.tarjetaPresionada,
             ]}
-            onPress={() => navigation.navigate("DetalleCita", { cita })}
+            onPress={() => navigation.navigate("DetalleCita", { cita: item })}
           >
-            <Text style={styles.nombrePaciente}>{cita.paciente}</Text>
+            <Text style={styles.nombrePaciente}>{item.paciente}</Text>
 
             <View style={styles.especialidadEstadoContainer}>
-              <Text style={styles.especialidad}>{cita.especialidad}</Text>
+              <Text style={styles.especialidad}>{item.especialidad}</Text>
               <View
                 style={[
                   styles.statusEstado,
-                  cita.estado === "Pendiente"
+                  item.estado === "Pendiente"
                     ? styles.statusPendiente
-                    : cita.estado === "Completada"
+                    : item.estado === "Completada"
                       ? styles.statusCompletada
                       : styles.statusCancelada,
                 ]}
               >
-                <Text style={styles.statusText}>{cita.estado}</Text>
+                <Text style={styles.statusText}>{item.estado}</Text>
               </View>
             </View>
 
             <View style={styles.fechaHoraContainer}>
-              <Text style={styles.fechaHora}>📅 {cita.fecha}</Text>
-              <Text style={styles.fechaHora}>🕒 {cita.hora}</Text>
+              <Text style={styles.fechaHora}>📅 {item.fecha}</Text>
+              <Text style={styles.fechaHora}>🕒 {item.hora}</Text>
             </View>
           </Pressable>
-        ))}
-      </ScrollView>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.textoVacio}>No hay citas registradas.</Text>
+        }
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F7FA" },
+  centrado: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5F7FA",
+    padding: 20,
+  },
+  textoCarga: { marginTop: 12, fontSize: 16, color: "#757575" },
+  textoError: {
+    fontSize: 16,
+    color: "#F44336",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  textoVacio: {
+    textAlign: "center",
+    color: "#9E9E9E",
+    marginTop: 40,
+    fontSize: 16,
+  },
   header: {
     padding: 20,
     backgroundColor: "#FFFFFF",
