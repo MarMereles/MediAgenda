@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import {View,Text,TextInput,StyleSheet,Pressable,ScrollView,Alert,} from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { useCitas } from "../context/CitasContext";
 
 export default function RegistroCitaScreen({ navigation }) {
@@ -11,27 +19,37 @@ export default function RegistroCitaScreen({ navigation }) {
 
   const manejarGuardado = () => {
     // Validación (Clase 3)
-    if (!paciente.trim() ||!especialidad.trim() ||!fecha.trim() ||!hora.trim()) {
-      Alert.alert("Campos incompletos","Completá todos los campos del formulario.",);
+    if (
+      !paciente.trim() ||
+      !especialidad.trim() ||
+      !fecha.trim() ||
+      !hora.trim()
+    ) {
+      Alert.alert(
+        "Campos incompletos",
+        "Completá todos los campos del formulario.",
+      );
       return;
     }
 
     agregarCita({ paciente, especialidad, fecha, hora, estado: "Pendiente" });
     Alert.alert("Éxito", "Cita registrada correctamente");
-    navigation.goBack(); // Vuelve a Home (Stack)
+
+    // Limpiamos el formulario
+    setPaciente("");
+    setEspecialidad("");
+    setFecha("");
+    setHora("");
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.titulo}>Registrar Nueva Cita</Text>
-        <Text style={styles.subtitulo}>Listado de Pacientes</Text>
+        <Text style={styles.subtitulo}>Ingresa los datos del paciente</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.titulo}>Registrar Nueva Cita</Text>
-        <Text style={styles.subtitulo}>Ingresa los datos del paciente</Text>
-
+      <ScrollView contentContainerStyle={styles.formContainer}>
         <Text style={styles.label}>Nombre del Paciente</Text>
         <TextInput
           style={styles.input}
@@ -73,14 +91,30 @@ export default function RegistroCitaScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: "#F5F7FA", flexGrow: 1 },
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F7FA",
+  },
+  header: {
+    padding: 20,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+  },
   titulo: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#1A237E",
     marginBottom: 4,
   },
-  subtitulo: { fontSize: 16, color: "#757575", marginBottom: 20 },
+  subtitulo: {
+    fontSize: 16,
+    color: "#757575",
+  },
+  formContainer: {
+    padding: 20,
+    flexGrow: 1,
+  },
   label: {
     fontSize: 14,
     fontWeight: "bold",
@@ -103,5 +137,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
   },
-  btnText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
+  btnText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });

@@ -30,7 +30,7 @@ export function CitasProvider({ children }) {
       }
       const data = await response.json();
 
-      // Adaptamos los datos de la API a nuestro formato de "cita médica"
+      // Se adapta los datos de la API al formato de cita que se necesita
       const citasAdaptadas = data.slice(0, 8).map((usuario, index) => ({
         id: usuario.id.toString(),
         paciente: usuario.name,

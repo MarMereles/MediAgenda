@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useCitas } from "../context/CitasContext";
 
 export default function DetalleCitaScreen({ route, navigation }) {
-  const { cita } = route.params; // Paso de parámetros (Clase 4)
+  const { cita } = route.params;
   const { cambiarEstado } = useCitas();
 
   return (

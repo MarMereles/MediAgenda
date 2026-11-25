@@ -3,20 +3,24 @@ import React from "react";
 import { View, StyleSheet, Dimensions, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // <-- NUEVO
 
 const { height, width } = Dimensions.get("window");
 
 export default function AppLayout({ children }) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.screen}>
       <LinearGradient
         colors={[colors.background, "transparent"]}
-        style={styles.gradient}
+        style={[styles.gradient, { top: -insets.top }]} // <-- El gradiente se extiende arriba del notch
       />
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      <View style={styles.container}>{children}</View>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        {children}
+      </View>
     </View>
   );
 }
